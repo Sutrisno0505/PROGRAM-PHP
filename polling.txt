@@ -1,0 +1,31 @@
+<?php
+$conn = new mysqli("localhost", "root", "", "db_pilihan");
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $pilihan_id = intval($_POST['pilihan']);
+    $conn->query("UPDATE polling SET jumlah = jumlah + 1 WHERE id = $pilihan_id");
+    header("Location: hasil.php");
+    exit;
+}
+$result = $conn->query("SELECT * FROM polling");
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Polling Bahasa Pemrograman</title>
+    </head>
+<body>
+    <link rel="stylesheet" href="style.css">
+    <h2>DOSEN Favorite Anda:</h2>
+    <form method="POST">
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <input type="radio" name="pilihan" value="<?= $row['id'] ?>" required>
+            <?= htmlspecialchars($row['pilihan']) ?><br>
+        <?php endwhile; ?>
+        <br>
+        <input type="submit" value="Kirim">
+    </form>
+</body>
+</html>
