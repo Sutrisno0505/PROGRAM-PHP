@@ -1,0 +1,30 @@
+<?php
+$conn = new mysqli("localhost", "root", "", "polling_db");
+
+if ($conn->connect_error) {
+    die("Koneksi gagal: " . $conn->connect_error);
+}
+
+$result = $conn->query("SELECT * FROM polling");
+
+// Hitung total suara
+$total = $conn->query("SELECT SUM(jumlah) AS total FROM polling")->fetch_assoc()['total'];
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hasil Polling</title>
+   </head>
+<body>
+    <h2>Hasil Polling</h2>
+<?php while ($row = $result->fetch_assoc()): 
+        $persentase = $total ? round(($row['jumlah'] / $total) * 100, 2) : 0;
+    ?>
+        <p>
+            <?= htmlspecialchars($row['pilihan']) ?>: <?= $row['jumlah'] ?> suara (<?= $persentase ?>%)
+        </p>
+    <?php endwhile; ?>
+    <br>
+    <a href="polling.php">Kembali ke polling</a>
+</body>
+</html>
